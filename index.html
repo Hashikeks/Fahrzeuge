@@ -94,21 +94,22 @@ footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6;
 <footer>© Hashikeks#0</footer>
 
 <script>
-const ADMIN_PASSWORD = "LSPD2026";
-const LOG_PASSWORD = "LOG2026";
+// ------------------- CONFIG -------------------
+const ADMIN_PASSWORD = "Leitung2026";
+const LOG_PASSWORD = "Walker77";
 
-// GitHub Einstellungen
-const GITHUB_USER = "DEIN_GITHUB_USERNAME";
-const GITHUB_REPO = "DEIN_REPO_NAME";
+const GITHUB_USER = "Hashikeks";
+const GITHUB_REPO = "Fahrzeuge";
 const GITHUB_BRANCH = "main";
 const VEHICLES_FILE = "vehiclesData.json";
 const LOG_FILE = "adminLog.json";
-const GITHUB_TOKEN = "DEIN_PERSONAL_ACCESS_TOKEN";
+const GITHUB_TOKEN = "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";
+// ---------------------------------------------
 
 let vehiclesData = {};
 let adminLog = [];
 
-// Hilfsfunktion: GitHub Datei laden
+// GitHub Daten laden
 async function loadGitHubData() {
     const [vehiclesRes, logRes] = await Promise.all([
         fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`),
@@ -127,7 +128,7 @@ async function loadGitHubData() {
     updateAdminLog();
 }
 
-// GitHub Datei speichern
+// GitHub speichern
 async function saveToGitHub(fileName, data, sha, message) {
     const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${fileName}`;
     const body = {
@@ -145,7 +146,7 @@ async function saveToGitHub(fileName, data, sha, message) {
     return json.content.sha;
 }
 
-// Fahrzeuge rendern
+// ------------------- Funktionen -------------------
 function renderVehicles(){
     const container = document.getElementById("vehiclesContainer");
     container.innerHTML = "";
@@ -163,7 +164,6 @@ function renderVehicles(){
     }
 }
 
-// Admin Code prüfen
 function checkCode(){
     if(document.getElementById("adminCode").value===ADMIN_PASSWORD){
         document.getElementById("adminPanel").style.display="block";
@@ -173,7 +173,6 @@ function checkCode(){
     } else alert("Falscher Code!");
 }
 
-// Log-Code prüfen
 function checkLogCode() {
     if(document.getElementById("logCode").value===LOG_PASSWORD){
         const panel = document.getElementById("adminPlusPanel");
@@ -185,7 +184,6 @@ function checkLogCode() {
     } else alert("Falscher Code!");
 }
 
-// Fahrzeug hinzufügen
 async function addVehicle(){
     const name=document.getElementById("vehicleName").value.trim();
     const year=document.getElementById("vehicleYear").value.trim();
@@ -205,7 +203,6 @@ async function addVehicle(){
     document.getElementById("vehicleDescription").value=""; document.getElementById("vehicleImage").value="";
 }
 
-// Fahrzeug entfernen
 async function removeVehicle(){
     const cat=document.getElementById("removeCategory").value;
     const idx=document.getElementById("removeVehicle").value;
@@ -223,14 +220,12 @@ async function removeVehicle(){
     } else alert("Bitte Kategorie und Fahrzeug wählen.");
 }
 
-// Dropdown aktualisieren
 function updateRemoveVehicles(){
     const cat=document.getElementById("removeCategory").value;
     const sel=document.getElementById("removeVehicle"); sel.innerHTML="<option value=''>Fahrzeug wählen</option>";
     if(cat && vehiclesData[cat]) vehiclesData[cat].forEach((v,i)=>{ const opt=document.createElement("option"); opt.value=i; opt.textContent=v.name; sel.appendChild(opt); });
 }
 
-// Versionsverlauf rendern
 function updateAdminLog(){
     const ul=document.getElementById("adminLog"); ul.innerHTML="";
     adminLog.slice().reverse().forEach(e=>{
@@ -240,7 +235,6 @@ function updateAdminLog(){
     });
 }
 
-// Versionsverlauf löschen
 async function clearAdminLog() {
     if(confirm("Möchtest du wirklich den gesamten Versionsverlauf löschen?")) {
         adminLog=[];
@@ -253,7 +247,7 @@ async function clearAdminLog() {
     }
 }
 
-// Initial laden
+// ------------------- Initial -------------------
 loadGitHubData();
 </script>
 </body>
