@@ -23,27 +23,57 @@ body {
 .card-description { color: #cccccc; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6; }
 @keyframes policeBorder { 0% { border-color: #1e90ff; box-shadow:0 0 10px rgba(30,144,255,0.8);} 100% { border-color: #ff3b3b; box-shadow:0 0 10px rgba(255,59,59,0.8);} }
-#adminPanel,#adminRemovePanel,#adminPlusPanel { max-width: 1200px; margin: 20px auto; padding: 20px; background: #0b1f35; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-#adminPanel input,#adminPanel select,#adminRemovePanel input,#adminRemovePanel select,#adminRemovePanel button,#adminPanel button { padding: 6px; margin: 5px; border-radius: 5px; border: none; }
+
+#adminPanel,#adminRemovePanel,#adminPlusPanel { 
+    max-width: 1200px; margin: 20px auto; padding: 20px; 
+    background: #0b1f35; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+}
+#adminPanel input,#adminPanel select,#adminRemovePanel input,#adminRemovePanel select,#adminRemovePanel button,#adminPanel button { 
+    padding: 6px; margin: 5px; border-radius: 5px; border: none; 
+}
 #adminPanel button,#adminRemovePanel button { background-color: #4aa3ff; color: white; cursor: pointer; }
 #adminPanel button:hover,#adminRemovePanel button:hover { background-color: #1e90ff; }
-#codeInput { max-width: 300px; margin: 20px auto; display: flex; justify-content: center; }
-#codeInput input { padding: 6px; border-radius: 5px; border: none; margin-right: 5px; }
-#codeInput button { padding: 6px 12px; border: none; border-radius: 5px; background-color: #4aa3ff; color: white; cursor: pointer; }
-#codeInput button:hover { background-color: #1e90ff; }
+
+#codeInput, #logCodeInput { max-width: 300px; margin: 20px auto; display: flex; justify-content: center; }
+#codeInput input, #logCodeInput input { padding: 6px; border-radius: 5px; border: none; margin-right: 5px; }
+#codeInput button, #logCodeInput button { padding: 6px 12px; border: none; border-radius: 5px; background-color: #4aa3ff; color: white; cursor: pointer; }
+#codeInput button:hover, #logCodeInput button:hover { background-color: #1e90ff; }
+
+#adminPlusPanel { 
+    opacity: 0; 
+    transform: translateY(-20px); 
+    transition: opacity 0.5s ease, transform 0.5s ease; 
+    display: none; 
+}
+#adminPlusPanel.show { 
+    display: block; 
+    opacity: 1; 
+    transform: translateY(0); 
+}
+
 #adminPlusPanel ul { list-style: none; padding-left: 0; color: #ffffff; }
 #adminPlusPanel li { padding: 5px 0; }
+#adminPlusPanel button { padding: 6px 12px; border-radius: 5px; border: none; cursor: pointer; color: white; background-color: #ff4c4c; margin-top: 10px; }
+#adminPlusPanel button:hover { background-color: #e63939; }
 </style>
 </head>
 <body>
 
 <div id="vehiclesContainer"></div>
 
+<!-- Admin-Code Input -->
 <div id="codeInput">
     <input type="password" id="adminCode" placeholder="Admin Code">
     <button onclick="checkCode()">Eingeben</button>
 </div>
 
+<!-- Log-Code Input -->
+<div id="logCodeInput">
+    <input type="password" id="logCode" placeholder="Log Code">
+    <button onclick="checkLogCode()">Eingeben</button>
+</div>
+
+<!-- Fahrzeug entfernen -->
 <div id="adminRemovePanel" style="display:none;">
     <h3>Fahrzeug entfernen</h3>
     <label>Wer entfernt das Fahrzeug? *<input type="text" id="removedBy" placeholder="Dein Name"></label><br>
@@ -60,6 +90,7 @@ footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6;
     <button onclick="removeVehicle()">Entfernen</button>
 </div>
 
+<!-- Admin Panel -->
 <div id="adminPanel" style="display:none;">
     <h2>Admin Panel</h2>
     <input type="text" id="vehicleName" placeholder="Fahrzeugname">
@@ -77,15 +108,18 @@ footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6;
     <button onclick="addVehicle()">Hinzufügen</button>
 </div>
 
-<div id="adminPlusPanel" style="display:none;">
+<!-- Versionsverlauf -->
+<div id="adminPlusPanel">
     <h2>Versionsverlauf</h2>
     <ul id="adminLog"></ul>
+    <button onclick="clearAdminLog()">Versionsverlauf löschen</button>
 </div>
 
 <footer>© Hashikeks#0</footer>
 
 <script>
-const ADMIN_PASSWORD = "geheim123";
+const ADMIN_PASSWORD = "LSPD2026";
+const LOG_PASSWORD = "LOG2026";
 
 // Fahrzeuge & Log aus LocalStorage laden oder leer initialisieren
 let vehiclesData;
@@ -108,7 +142,7 @@ function renderVehicles(){
         const grid=document.createElement("div"); grid.classList.add("grid");
         vehiclesData[cat].forEach(v=>{
             const card=document.createElement("div"); card.classList.add("card");
-            card.innerHTML=`<img src="${v.img}"><div class="card-content"><div class="card-title">${v.name}</div><div class="card-subtitle">${v.year}                        </div>${v.description?`<div class="card-description">${v.description}</div>`:""}</div>`;
+            card.innerHTML=`<img src="${v.img}"><div class="card-content"><div class="card-title">${v.name}</div><div class="card-subtitle">${v.year}</div>${v.description?`<div class="card-description">${v.description}</div>`:""}</div>`;
             grid.appendChild(card);
         });
         section.appendChild(grid); container.appendChild(section);
@@ -121,7 +155,18 @@ function checkCode(){
         document.getElementById("adminPanel").style.display="block";
         document.getElementById("adminRemovePanel").style.display="block";
         document.getElementById("codeInput").style.display="none";
-        updateAdminLog(); alert("Admin Panel freigeschaltet!");
+        alert("Admin Panel freigeschaltet!");
+    } else alert("Falscher Code!");
+}
+
+// Log-Code prüfen mit sanfter Animation
+function checkLogCode() {
+    if(document.getElementById("logCode").value===LOG_PASSWORD){
+        const panel = document.getElementById("adminPlusPanel");
+        panel.style.display = "block"; 
+        setTimeout(() => panel.classList.add("show"), 10); 
+        document.getElementById("logCodeInput").style.display = "none";
+        alert("Versionsverlauf freigeschaltet!");
     } else alert("Falscher Code!");
 }
 
@@ -130,7 +175,7 @@ function addVehicle(){
     const name=document.getElementById("vehicleName").value.trim();
     const year=document.getElementById("vehicleYear").value.trim();
     const description=document.getElementById("vehicleDescription").value.trim();
-const img=document.getElementById("vehicleImage").value || "https://imgur.com/HkCAjLw.png";
+    const img=document.getElementById("vehicleImage").value || "https://imgur.com/HkCAjLw.png";
     const cat=document.getElementById("vehicleCategory").value;
 
     if(!name || !year){ alert("Bitte Name und Baujahr angeben!"); return; }
@@ -182,7 +227,20 @@ function updateAdminLog(){
         li.innerHTML=`<strong>${e.name}</strong> wurde <em>${e.action}</em> von <strong>${e.by}</strong> in Kategorie <strong>${e.category}</strong> am ${new Date(e.timestamp).toLocaleString()}`;
         ul.appendChild(li);
     });
-    document.getElementById("adminPlusPanel").style.display=adminLog.length?"block":"none";
+}
+
+// Versionsverlauf löschen mit sanfter Ausblendung
+function clearAdminLog() {
+    if(confirm("Möchtest du wirklich den gesamten Versionsverlauf löschen?")) {
+        adminLog = [];
+        saveAdminLog();
+        updateAdminLog();
+
+        const panel = document.getElementById("adminPlusPanel");
+        panel.classList.remove("show");
+        setTimeout(() => panel.style.display = "none", 500);
+        alert("Versionsverlauf wurde gelöscht!");
+    }
 }
 
 // Initial
