@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Fahrzeugübersicht</title>
 <style>
-body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: transparent; color: #fff; }
+body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #0e2136; color: #fff; }
 .container { max-width: 1800px; margin: 50px auto; padding: 20px; }
 .title { text-align: center; font-size: 36px; letter-spacing: 3px; margin-bottom: 40px; position: relative; }
 .title::after { content: ""; width: 120px; height: 2px; background: #4aa3ff; display: block; margin: 15px auto 0; }
@@ -18,20 +18,16 @@ body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: transp
 .card-description { color: #cccccc; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6; }
 @keyframes policeBorder { 0% { border-color: #1e90ff; box-shadow:0 0 10px rgba(30,144,255,0.8);} 100% { border-color: #ff3b3b; box-shadow:0 0 10px rgba(255,59,59,0.8);} }
-
 #adminPanel,#adminRemovePanel,#adminPlusPanel { max-width:1200px;margin:20px auto;padding:20px;background:#0b1f35;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.3);}
 #adminPanel input,#adminPanel select,#adminRemovePanel input,#adminRemovePanel select,#adminRemovePanel button,#adminPanel button { padding:6px;margin:5px;border-radius:5px;border:none; }
 #adminPanel button,#adminRemovePanel button { background-color:#4aa3ff;color:white;cursor:pointer; }
 #adminPanel button:hover,#adminRemovePanel button:hover { background-color:#1e90ff; }
-
 #codeInput,#logCodeInput { max-width:300px;margin:20px auto;display:flex;justify-content:center; }
 #codeInput input,#logCodeInput input { padding:6px;border-radius:5px;border:none;margin-right:5px; }
 #codeInput button,#logCodeInput button { padding:6px 12px;border:none;border-radius:5px;background-color:#4aa3ff;color:white;cursor:pointer; }
 #codeInput button:hover,#logCodeInput button:hover { background-color:#1e90ff; }
-
 #adminPlusPanel { opacity:0; transform:translateY(-20px); transition:opacity 0.5s ease,transform 0.5s ease; display:none; }
 #adminPlusPanel.show { display:block; opacity:1; transform:translateY(0); }
-
 #adminPlusPanel ul { list-style:none;padding-left:0;color:#fff; }
 #adminPlusPanel li { padding:5px 0; }
 #adminPlusPanel button { padding:6px 12px;border-radius:5px;border:none;cursor:pointer;color:white;background-color:#ff4c4c;margin-top:10px;}
@@ -103,69 +99,67 @@ const GITHUB_REPO = "Fahrzeuge";
 const GITHUB_BRANCH = "main";
 const VEHICLES_FILE = "vehiclesData.json";
 const LOG_FILE = "adminLog.json";
-const GITHUB_TOKEN = "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";
+const GITHUB_TOKEN = "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";KEN";
+const LOCAL_MODE = false;
 // ---------------------------------------------
 
 let vehiclesData = {};
 let adminLog = [];
+let vehiclesSHA = null;
+let logSHA = null;
 
-// GitHub Daten laden
-async function loadGitHubData() {
-    const [vehiclesRes, logRes] = await Promise.all([
-        fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`),
-        fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${LOG_FILE}`)
-    ]);
-    const vehiclesJson = await vehiclesRes.json();
-    const logJson = await logRes.json();
-
-    vehiclesData = JSON.parse(atob(vehiclesJson.content));
-    vehiclesData.sha = vehiclesJson.sha;
-
-    adminLog = JSON.parse(atob(logJson.content));
-    adminLog.sha = logJson.sha;
-
-    renderVehicles();
-    updateAdminLog();
-}
-
-// GitHub speichern
-async function saveToGitHub(fileName, data, sha, message) {
-    const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${fileName}`;
-    const body = {
-        message: message,
-        content: btoa(JSON.stringify(data, null, 2)),
-        branch: GITHUB_BRANCH,
-        sha: sha
-    };
-    const res = await fetch(url, {
-        method: "PUT",
-        headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-    });
-    const json = await res.json();
-    return json.content.sha;
-}
-
-// ------------------- Funktionen -------------------
-function renderVehicles(){
+function renderVehicles() {
     const container = document.getElementById("vehiclesContainer");
     container.innerHTML = "";
-    for(const cat in vehiclesData){
-        if(!vehiclesData[cat] || vehiclesData[cat].length===0) continue;
-        const section=document.createElement("div"); section.classList.add("container");
-        const title=document.createElement("div"); title.classList.add("title"); title.textContent=`— ${cat} —`; section.appendChild(title);
-        const grid=document.createElement("div"); grid.classList.add("grid");
-        vehiclesData[cat].forEach(v=>{
-            const card=document.createElement("div"); card.classList.add("card");
-            card.innerHTML=`<img src="${v.img}"><div class="card-content"><div class="card-title">${v.name}</div><div class="card-subtitle">${v.year}</div>${v.description?`<div class="card-description">${v.description}</div>`:""}</div>`;
+    for (const cat in vehiclesData) {
+        if (!vehiclesData[cat] || vehiclesData[cat].length === 0) continue;
+        const section = document.createElement("div"); section.classList.add("container");
+        const title = document.createElement("div"); title.classList.add("title"); title.textContent = `— ${cat} —`; section.appendChild(title);
+        const grid = document.createElement("div"); grid.classList.add("grid");
+        vehiclesData[cat].forEach(v => {
+            const card = document.createElement("div"); card.classList.add("card");
+            card.innerHTML = `<img src="${v.img}"><div class="card-content"><div class="card-title">${v.name}</div><div class="card-subtitle">${v.year}</div>${v.description ? `<div class="card-description">${v.description}</div>` : ""}</div>`;
             grid.appendChild(card);
         });
         section.appendChild(grid); container.appendChild(section);
     }
 }
 
-function checkCode(){
-    if(document.getElementById("adminCode").value===ADMIN_PASSWORD){
+function updateAdminLog() {
+    const ul = document.getElementById("adminLog"); ul.innerHTML = "";
+    adminLog.slice().reverse().forEach(e => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${e.name}</strong> wurde <em>${e.action}</em> von <strong>${e.by}</strong> in Kategorie <strong>${e.category}</strong> am ${new Date(e.timestamp).toLocaleString()}`;
+        ul.appendChild(li);
+    });
+}
+
+async function loadVehicles() {
+    if (LOCAL_MODE) { fetch(VEHICLES_FILE).then(res=>res.json()).then(data=>{ vehiclesData=data; renderVehicles(); updateRemoveVehicles(); }); }
+    else { const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`);
+           const json = await res.json(); vehiclesData=JSON.parse(atob(json.content)); vehiclesSHA=json.sha; renderVehicles(); updateRemoveVehicles(); }
+}
+
+async function loadLog() {
+    if (LOCAL_MODE) { fetch(LOG_FILE).then(res=>res.json()).then(data=>{ adminLog=data; updateAdminLog(); }); }
+    else { const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${LOG_FILE}`);
+           const json = await res.json(); adminLog=JSON.parse(atob(json.content)); logSHA=json.sha; updateAdminLog(); }
+}
+
+async function saveVehiclesGitHub(message="Update Fahrzeuge") { 
+    const body={ message, content:btoa(JSON.stringify(vehiclesData,null,2)), branch:GITHUB_BRANCH, sha:vehiclesSHA };
+    const res=await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,{ method:"PUT", headers:{"Authorization":`token ${GITHUB_TOKEN}`,"Content-Type":"application/json"}, body:JSON.stringify(body) });
+    const json=await res.json(); vehiclesSHA=json.content.sha;
+}
+
+async function saveLogGitHub(message="Update Log") {
+    const body={ message, content:btoa(JSON.stringify(adminLog,null,2)), branch:GITHUB_BRANCH, sha:logSHA };
+    const res=await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${LOG_FILE}`,{ method:"PUT", headers:{"Authorization":`token ${GITHUB_TOKEN}`,"Content-Type":"application/json"}, body:JSON.stringify(body) });
+    const json=await res.json(); logSHA=json.content.sha;
+}
+
+function checkCode() {
+    if (document.getElementById("adminCode").value===ADMIN_PASSWORD) {
         document.getElementById("adminPanel").style.display="block";
         document.getElementById("adminRemovePanel").style.display="block";
         document.getElementById("codeInput").style.display="none";
@@ -174,49 +168,38 @@ function checkCode(){
 }
 
 function checkLogCode() {
-    if(document.getElementById("logCode").value===LOG_PASSWORD){
-        const panel = document.getElementById("adminPlusPanel");
-        panel.style.display = "block"; 
-        setTimeout(() => panel.classList.add("show"), 10);
-        document.getElementById("logCodeInput").style.display = "none";
-        updateAdminLog();
-        alert("Versionsverlauf freigeschaltet!");
+    if (document.getElementById("logCode").value===LOG_PASSWORD) {
+        const panel=document.getElementById("adminPlusPanel"); panel.style.display="block"; setTimeout(()=>panel.classList.add("show"),10);
+        document.getElementById("logCodeInput").style.display="none"; updateAdminLog(); alert("Versionsverlauf freigeschaltet!");
     } else alert("Falscher Code!");
 }
 
-async function addVehicle(){
+async function addVehicle() {
     const name=document.getElementById("vehicleName").value.trim();
     const year=document.getElementById("vehicleYear").value.trim();
     const description=document.getElementById("vehicleDescription").value.trim();
     const img=document.getElementById("vehicleImage").value || "https://imgur.com/HkCAjLw.png";
     const cat=document.getElementById("vehicleCategory").value;
-    if(!name || !year){ alert("Bitte Name und Baujahr angeben!"); return; }
+    if(!name||!year){ alert("Bitte Name und Baujahr angeben!"); return; }
     if(!vehiclesData[cat]) vehiclesData[cat]=[];
     vehiclesData[cat].push({name,year,description,img});
-    vehiclesData.sha = await saveToGitHub(VEHICLES_FILE, vehiclesData, vehiclesData.sha, "Fahrzeug hinzugefügt");
-
     adminLog.push({action:"hinzugefügt",name,category:cat,by:"Admin",timestamp:new Date()});
-    adminLog.sha = await saveToGitHub(LOG_FILE, adminLog, adminLog.sha, "Log aktualisiert");
-
-    renderVehicles(); updateRemoveVehicles();
+    renderVehicles(); updateAdminLog(); updateRemoveVehicles();
     document.getElementById("vehicleName").value=""; document.getElementById("vehicleYear").value="";
     document.getElementById("vehicleDescription").value=""; document.getElementById("vehicleImage").value="";
+    if(!LOCAL_MODE){ await saveVehiclesGitHub("Fahrzeug hinzugefügt"); await saveLogGitHub("Log aktualisiert"); }
 }
 
-async function removeVehicle(){
+async function removeVehicle() {
     const cat=document.getElementById("removeCategory").value;
     const idx=document.getElementById("removeVehicle").value;
     const by=document.getElementById("removedBy").value.trim();
     if(!by){ alert("Bitte gib an, wer das Fahrzeug entfernt!"); return; }
-    if(cat && idx!==""){
-        const removed=vehiclesData[cat][idx];
-        vehiclesData[cat].splice(idx,1);
-        vehiclesData.sha = await saveToGitHub(VEHICLES_FILE, vehiclesData, vehiclesData.sha, "Fahrzeug entfernt");
-
+    if(cat && idx!==""){ const removed=vehiclesData[cat][idx]; vehiclesData[cat].splice(idx,1);
         adminLog.push({action:"entfernt",name:removed.name,category:cat,by,timestamp:new Date()});
-        adminLog.sha = await saveToGitHub(LOG_FILE, adminLog, adminLog.sha, "Log aktualisiert");
-
-        renderVehicles(); updateRemoveVehicles(); document.getElementById("removedBy").value=""; alert("Fahrzeug entfernt!");
+        renderVehicles(); updateAdminLog(); updateRemoveVehicles(); document.getElementById("removedBy").value="";
+        alert("Fahrzeug entfernt!");
+        if(!LOCAL_MODE){ await saveVehiclesGitHub("Fahrzeug entfernt"); await saveLogGitHub("Log aktualisiert"); }
     } else alert("Bitte Kategorie und Fahrzeug wählen.");
 }
 
@@ -226,29 +209,18 @@ function updateRemoveVehicles(){
     if(cat && vehiclesData[cat]) vehiclesData[cat].forEach((v,i)=>{ const opt=document.createElement("option"); opt.value=i; opt.textContent=v.name; sel.appendChild(opt); });
 }
 
-function updateAdminLog(){
-    const ul=document.getElementById("adminLog"); ul.innerHTML="";
-    adminLog.slice().reverse().forEach(e=>{
-        const li=document.createElement("li");
-        li.innerHTML=`<strong>${e.name}</strong> wurde <em>${e.action}</em> von <strong>${e.by}</strong> in Kategorie <strong>${e.category}</strong> am ${new Date(e.timestamp).toLocaleString()}`;
-        ul.appendChild(li);
-    });
-}
-
 async function clearAdminLog() {
-    if(confirm("Möchtest du wirklich den gesamten Versionsverlauf löschen?")) {
-        adminLog=[];
-        adminLog.sha = await saveToGitHub(LOG_FILE, adminLog, adminLog.sha, "Versionsverlauf gelöscht");
-        updateAdminLog();
-        const panel = document.getElementById("adminPlusPanel");
-        panel.classList.remove("show");
-        setTimeout(()=>panel.style.display="none",500);
-        alert("Versionsverlauf wurde gelöscht!");
+    if(confirm("Möchtest du wirklich den gesamten Versionsverlauf löschen?")){
+        adminLog=[]; updateAdminLog();
+        const panel=document.getElementById("adminPlusPanel"); panel.classList.remove("show"); setTimeout(()=>panel.style.display="none",500);
+        if(!LOCAL_MODE) await saveLogGitHub("Versionsverlauf gelöscht");
+        alert("Versionsverlauf gelöscht!");
     }
 }
 
 // ------------------- Initial -------------------
-loadGitHubData();
+loadVehicles();
+loadLog();
 </script>
 </body>
 </html>
