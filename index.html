@@ -166,6 +166,7 @@ function checkLogCode() {
         panel.style.display = "block"; 
         setTimeout(() => panel.classList.add("show"), 10); 
         document.getElementById("logCodeInput").style.display = "none";
+        updateAdminLog(); // sicherstellen, dass Log angezeigt wird
         alert("Versionsverlauf freigeschaltet!");
     } else alert("Falscher Code!");
 }
@@ -235,7 +236,6 @@ function clearAdminLog() {
         adminLog = [];
         saveAdminLog();
         updateAdminLog();
-
         const panel = document.getElementById("adminPlusPanel");
         panel.classList.remove("show");
         setTimeout(() => panel.style.display = "none", 500);
