@@ -1,1 +1,10 @@
-{}
+{
+  "Officer I": [
+    {
+      "name": "Ford Explorer",
+      "year": "2022",
+      "description": "Streifenwagen",
+      "img": "https://..."
+    }
+  ]
+}
