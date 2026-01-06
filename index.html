@@ -146,11 +146,37 @@ async function loadLog() {
            const json = await res.json(); adminLog=JSON.parse(atob(json.content)); logSHA=json.sha; updateAdminLog(); }
 }
 
-async function saveVehiclesGitHub(message="Update Fahrzeuge") { 
-    const body={ message, content:btoa(JSON.stringify(vehiclesData,null,2)), branch:GITHUB_BRANCH, sha:vehiclesSHA };
-    const res=await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,{ method:"PUT", headers:{"Authorization":`token ${GITHUB_TOKEN}`,"Content-Type":"application/json"}, body:JSON.stringify(body) });
-    const json=await res.json(); vehiclesSHA=json.content.sha;
+async function saveVehiclesGitHub(message = "Update Fahrzeuge") {
+    const body = {
+        message,
+        content: btoa(JSON.stringify(vehiclesData, null, 2)),
+        branch: GITHUB_BRANCH,
+        sha: vehiclesSHA
+    };
+
+    const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,
+        {
+            method: "PUT",
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        }
+    );
+
+    const json = await res.json();
+
+    if (!json.content || !json.content.sha) {
+        console.error("GitHub Save Error:", json);
+        alert("Fehler beim Speichern auf GitHub. Siehe Console.");
+        return;
+    }
+
+    vehiclesSHA = json.content.sha; // <<< WICHTIG
 }
+
 
 async function saveLogGitHub(message="Update Log") {
     const body={ message, content:btoa(JSON.stringify(adminLog,null,2)), branch:GITHUB_BRANCH, sha:logSHA };
@@ -219,8 +245,10 @@ async function clearAdminLog() {
 }
 
 // ------------------- Initial -------------------
-loadVehicles();
-loadLog();
+(async () => {
+    await loadVehicles();
+    await loadLog();
+})();
 </script>
 </body>
 </html>
