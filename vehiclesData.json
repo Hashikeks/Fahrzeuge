@@ -5,21 +5,32 @@
       "year": "2022",
       "description": "Test",
       "img": "https://img.gta5-mods.com/q75/images/lspd-swat-bravado-buffalo-sx-add-on/bccc47-EVE-20220302195941.017_1.png"
-    }
-  ]
-  "Officer I": [
+    },
     {
-      "name": "Ford Explorer",
+      "name": "Chevrolet Tahoe",
+      "year": "2021",
+      "description": "Test",
+      "img": "https://example.com/chevrolet-tahoe.png"
+    },
+    {
+      "name": "Dodge Charger",
+      "year": "2023",
+      "description": "Verfolgungsfahrzeug",
+      "img": "https://example.com/dodge-charger.png"
+    }
+  ],
+  "Detective": [
+    {
+      "name": "BMW 5er",
       "year": "2020",
       "description": "Test",
-      "img": "https://img.gta5-mods.com/q75/images/lspd-swat-bravado-buffalo-sx-add-on/bccc47-EVE-20220302195941.017_1.png"
+      "img": "https://example.com/bmw-5er.png"
+    },
+    {
+      "name": "Audi A6",
+      "year": "2022",
+      "description": "Test",
+      "img": "https://example.com/audi-a6.png"
     }
   ]
-{
-  "Officer II": [
-    {
-      "name": "Ford Explorer",
-      "year": "2022",
-      "description": "Streifenwagen",
-      "img": "https://img.gta5-mods.com/q75/images/lspd-swat-bravado-buffalo-sx-add-on/bccc47-EVE-20220302195941.017_1.png"
 }
