@@ -87,7 +87,7 @@ footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6;
 <button onclick="clearAdminLog()">Versionsverlauf löschen</button>
 </div>
 
-<footer>© Hashikeks#0</footer>
+<footer>© 2026 Hashikeks#0</footer>
 
 <script>
 // ------------------- CONFIG -------------------
@@ -108,7 +108,6 @@ let vehiclesSHA = null;
 let adminLog = [];
 let logSHA = null;
 
-// ------------------- HELPER FUNCTIONS -------------------
 function renderVehicles() {
     const container = document.getElementById("vehiclesContainer");
     container.innerHTML = "";
@@ -136,60 +135,105 @@ function updateAdminLog() {
 }
 
 async function loadVehicles() {
-    if (LOCAL_MODE) return;
     const res = await fetch(
         `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}?ref=${GITHUB_BRANCH}`,
-        { headers: { Authorization: `token ${GITHUB_TOKEN}` } }
+        {
+            headers: {
+                Authorization: `token ${GITHUB_TOKEN}`
+            }
+        }
     );
+
     const json = await res.json();
-    if (!json.content) { vehiclesData = {}; return; }
-    vehiclesSHA = json.sha;
-    vehiclesData = JSON.parse(atob(json.content) || "{}");
+
+    if (!json.content) {
+        console.error("Fehler beim Laden der Fahrzeuge:", json);
+        vehiclesData = {};
+        return;
+    }
+
+    vehiclesSHA = json.sha; // <<< HIER WIRD DER SHA GESETZT
+
+    const decoded = atob(json.content);
+    vehiclesData = JSON.parse(decoded || "{}");
+
     renderVehicles();
     updateRemoveVehicles();
 }
 
 async function loadLog() {
-    if (LOCAL_MODE) { 
-        fetch(LOG_FILE).then(res=>res.json()).then(data=>{ adminLog=data; updateAdminLog(); }); 
-    } else { 
-        const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${LOG_FILE}`);
-        const json = await res.json(); 
-        adminLog = JSON.parse(atob(json.content)); 
-        logSHA = json.sha; 
-        updateAdminLog(); 
-    }
+    if (LOCAL_MODE) { fetch(LOG_FILE).then(res=>res.json()).then(data=>{ adminLog=data; updateAdminLog(); }); }
+    else { const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${LOG_FILE}`);
+           const json = await res.json(); adminLog=JSON.parse(atob(json.content)); logSHA=json.sha; updateAdminLog(); }
 }
 
 async function saveVehiclesGitHub(message = "Update Fahrzeuge") {
-    if (!vehiclesSHA) { alert("SHA fehlt – bitte Seite neu laden"); return; }
+    if (!vehiclesSHA) {
+        alert("SHA fehlt – bitte Seite neu laden");
+        return;
+    }
+
     const body = {
         message,
         content: btoa(JSON.stringify(vehiclesData, null, 2)),
         branch: GITHUB_BRANCH,
         sha: vehiclesSHA
     };
+
     const res = await fetch(
         `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,
-        { method: "PUT", headers: { Authorization: `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" }, body: JSON.stringify(body) }
+        {
+            method: "PUT",
+            headers: {
+                Authorization: `token ${GITHUB_TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        }
     );
+
     const json = await res.json();
-    if (!json.content || !json.content.sha) { console.error("GitHub Save Error:", json); alert("Fehler beim Speichern auf GitHub. Siehe Console."); return; }
-    vehiclesSHA = json.content.sha;
+
+    if (!json.content || !json.content.sha) {
+        console.error("Speichern fehlgeschlagen:", json);
+        alert("GitHub Speichern fehlgeschlagen – siehe Console");
+        return;
+    }
+
+    vehiclesSHA = json.content.sha; // <<< SHA aktualisieren
 }
+
+    const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,
+        {
+            method: "PUT",
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        }
+    );
+
+    const json = await res.json();
+
+    if (!json.content || !json.content.sha) {
+        console.error("GitHub Save Error:", json);
+        alert("Fehler beim Speichern auf GitHub. Siehe Console.");
+        return;
+    }
+
+    vehiclesSHA = json.content.sha; // <<< WICHTIG
+}
+
 
 async function saveLogGitHub(message="Update Log") {
-    if (!logSHA && !LOCAL_MODE) { alert("Log SHA fehlt!"); return; }
-    const body = { message, content: btoa(JSON.stringify(adminLog,null,2)), branch: GITHUB_BRANCH, sha: logSHA };
-    if (!LOCAL_MODE) {
-        const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${LOG_FILE}`, { method:"PUT", headers:{"Authorization":`token ${GITHUB_TOKEN}`,"Content-Type":"application/json"}, body:JSON.stringify(body) });
-        const json = await res.json(); 
-        logSHA = json.content.sha;
-    }
+    const body={ message, content:btoa(JSON.stringify(adminLog,null,2)), branch:GITHUB_BRANCH, sha:logSHA };
+    const res=await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${LOG_FILE}`,{ method:"PUT", headers:{"Authorization":`token ${GITHUB_TOKEN}`,"Content-Type":"application/json"}, body:JSON.stringify(body) });
+    const json=await res.json(); logSHA=json.content.sha;
 }
 
-// ------------------- ADMIN FUNCTIONS -------------------
-window.checkCode = function() {
+function checkCode() {
     if (document.getElementById("adminCode").value===ADMIN_PASSWORD) {
         document.getElementById("adminPanel").style.display="block";
         document.getElementById("adminRemovePanel").style.display="block";
@@ -198,43 +242,51 @@ window.checkCode = function() {
     } else alert("Falscher Code!");
 }
 
-window.checkLogCode = function() {
+function checkLogCode() {
     if (document.getElementById("logCode").value===LOG_PASSWORD) {
-        const panel = document.getElementById("adminPlusPanel"); 
-        panel.style.display="block"; 
-        setTimeout(()=>panel.classList.add("show"),10);
-        document.getElementById("logCodeInput").style.display="none"; 
-        updateAdminLog(); 
-        alert("Versionsverlauf freigeschaltet!");
+        const panel=document.getElementById("adminPlusPanel"); panel.style.display="block"; setTimeout(()=>panel.classList.add("show"),10);
+        document.getElementById("logCodeInput").style.display="none"; updateAdminLog(); alert("Versionsverlauf freigeschaltet!");
     } else alert("Falscher Code!");
 }
 
-window.addVehicle = async function() {
+async function addVehicle() {
     const name = document.getElementById("vehicleName").value.trim();
     const year = document.getElementById("vehicleYear").value.trim();
     const description = document.getElementById("vehicleDescription").value.trim();
     const img = document.getElementById("vehicleImage").value || "https://imgur.com/HkCAjLw.png";
     const cat = document.getElementById("vehicleCategory").value;
-    if (!name || !year) { alert("Bitte Name und Baujahr angeben!"); return; }
+
+    if (!name || !year) { 
+        alert("Bitte Name und Baujahr angeben!"); 
+        return; 
+    }
+
     if (!vehiclesData[cat]) vehiclesData[cat] = [];
     vehiclesData[cat].push({ name, year, description, img });
+
     adminLog.push({ action: "hinzugefügt", name, category: cat, by: "Admin", timestamp: new Date() });
-    renderVehicles(); updateAdminLog(); updateRemoveVehicles();
+
+    renderVehicles(); 
+    updateAdminLog(); 
+    updateRemoveVehicles();
+
     document.getElementById("vehicleName").value = ""; 
     document.getElementById("vehicleYear").value = "";
     document.getElementById("vehicleDescription").value = ""; 
     document.getElementById("vehicleImage").value = "";
-    if (!LOCAL_MODE) { await saveVehiclesGitHub("Fahrzeug hinzugefügt"); await saveLogGitHub("Log aktualisiert"); }
+
+    if (!LOCAL_MODE) { 
+        await saveVehiclesGitHub("Fahrzeug hinzugefügt"); 
+        await saveLogGitHub("Log aktualisiert"); 
+    }
 }
 
-window.removeVehicle = async function() {
-    const cat = document.getElementById("removeCategory").value;
-    const idx = document.getElementById("removeVehicle").value;
-    const by = document.getElementById("removedBy").value.trim();
+async function removeVehicle() {
+    const cat=document.getElementById("removeCategory").value;
+    const idx=document.getElementById("removeVehicle").value;
+    const by=document.getElementById("removedBy").value.trim();
     if(!by){ alert("Bitte gib an, wer das Fahrzeug entfernt!"); return; }
-    if(cat && idx!==""){ 
-        const removed = vehiclesData[cat][idx]; 
-        vehiclesData[cat].splice(idx,1);
+    if(cat && idx!==""){ const removed=vehiclesData[cat][idx]; vehiclesData[cat].splice(idx,1);
         adminLog.push({action:"entfernt",name:removed.name,category:cat,by,timestamp:new Date()});
         renderVehicles(); updateAdminLog(); updateRemoveVehicles(); document.getElementById("removedBy").value="";
         alert("Fahrzeug entfernt!");
@@ -242,24 +294,26 @@ window.removeVehicle = async function() {
     } else alert("Bitte Kategorie und Fahrzeug wählen.");
 }
 
-window.updateRemoveVehicles = function(){
-    const cat = document.getElementById("removeCategory").value;
-    const sel = document.getElementById("removeVehicle"); sel.innerHTML="<option value=''>Fahrzeug wählen</option>";
+function updateRemoveVehicles(){
+    const cat=document.getElementById("removeCategory").value;
+    const sel=document.getElementById("removeVehicle"); sel.innerHTML="<option value=''>Fahrzeug wählen</option>";
     if(cat && vehiclesData[cat]) vehiclesData[cat].forEach((v,i)=>{ const opt=document.createElement("option"); opt.value=i; opt.textContent=v.name; sel.appendChild(opt); });
 }
 
-window.clearAdminLog = async function() {
+async function clearAdminLog() {
     if(confirm("Möchtest du wirklich den gesamten Versionsverlauf löschen?")){
         adminLog=[]; updateAdminLog();
-        const panel = document.getElementById("adminPlusPanel"); panel.classList.remove("show"); setTimeout(()=>panel.style.display="none",500);
+        const panel=document.getElementById("adminPlusPanel"); panel.classList.remove("show"); setTimeout(()=>panel.style.display="none",500);
         if(!LOCAL_MODE) await saveLogGitHub("Versionsverlauf gelöscht");
         alert("Versionsverlauf gelöscht!");
     }
 }
 
-// ------------------- INITIAL -------------------
+// ------------------- Initial -------------------
 (async () => {
     await loadVehicles();
     await loadLog();
 })();
 </script>
+</body>
+</html>
