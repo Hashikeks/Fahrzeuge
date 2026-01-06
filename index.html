@@ -104,8 +104,8 @@ const LOCAL_MODE = false;
 // ---------------------------------------------
 
 let vehiclesData = {};
-let adminLog = [];
 let vehiclesSHA = null;
+let adminLog = [];
 let logSHA = null;
 
 function renderVehicles() {
@@ -135,9 +135,30 @@ function updateAdminLog() {
 }
 
 async function loadVehicles() {
-    if (LOCAL_MODE) { fetch(VEHICLES_FILE).then(res=>res.json()).then(data=>{ vehiclesData=data; renderVehicles(); updateRemoveVehicles(); }); }
-    else { const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`);
-           const json = await res.json(); vehiclesData=JSON.parse(atob(json.content)); vehiclesSHA=json.sha; renderVehicles(); updateRemoveVehicles(); }
+    const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}?ref=${GITHUB_BRANCH}`,
+        {
+            headers: {
+                Authorization: `token ${GITHUB_TOKEN}`
+            }
+        }
+    );
+
+    const json = await res.json();
+
+    if (!json.content) {
+        console.error("Fehler beim Laden der Fahrzeuge:", json);
+        vehiclesData = {};
+        return;
+    }
+
+    vehiclesSHA = json.sha; // <<< HIER WIRD DER SHA GESETZT
+
+    const decoded = atob(json.content);
+    vehiclesData = JSON.parse(decoded || "{}");
+
+    renderVehicles();
+    updateRemoveVehicles();
 }
 
 async function loadLog() {
@@ -147,12 +168,40 @@ async function loadLog() {
 }
 
 async function saveVehiclesGitHub(message = "Update Fahrzeuge") {
+    if (!vehiclesSHA) {
+        alert("SHA fehlt – bitte Seite neu laden");
+        return;
+    }
+
     const body = {
         message,
         content: btoa(JSON.stringify(vehiclesData, null, 2)),
         branch: GITHUB_BRANCH,
         sha: vehiclesSHA
     };
+
+    const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,
+        {
+            method: "PUT",
+            headers: {
+                Authorization: `token ${GITHUB_TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        }
+    );
+
+    const json = await res.json();
+
+    if (!json.content || !json.content.sha) {
+        console.error("Speichern fehlgeschlagen:", json);
+        alert("GitHub Speichern fehlgeschlagen – siehe Console");
+        return;
+    }
+
+    vehiclesSHA = json.content.sha; // <<< SHA aktualisieren
+}
 
     const res = await fetch(
         `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,
@@ -201,19 +250,35 @@ function checkLogCode() {
 }
 
 async function addVehicle() {
-    const name=document.getElementById("vehicleName").value.trim();
-    const year=document.getElementById("vehicleYear").value.trim();
-    const description=document.getElementById("vehicleDescription").value.trim();
-    const img=document.getElementById("vehicleImage").value || "https://imgur.com/HkCAjLw.png";
-    const cat=document.getElementById("vehicleCategory").value;
-    if(!name||!year){ alert("Bitte Name und Baujahr angeben!"); return; }
-    if(!vehiclesData[cat]) vehiclesData[cat]=[];
-    vehiclesData[cat].push({name,year,description,img});
-    adminLog.push({action:"hinzugefügt",name,category:cat,by:"Admin",timestamp:new Date()});
-    renderVehicles(); updateAdminLog(); updateRemoveVehicles();
-    document.getElementById("vehicleName").value=""; document.getElementById("vehicleYear").value="";
-    document.getElementById("vehicleDescription").value=""; document.getElementById("vehicleImage").value="";
-    if(!LOCAL_MODE){ await saveVehiclesGitHub("Fahrzeug hinzugefügt"); await saveLogGitHub("Log aktualisiert"); }
+    const name = document.getElementById("vehicleName").value.trim();
+    const year = document.getElementById("vehicleYear").value.trim();
+    const description = document.getElementById("vehicleDescription").value.trim();
+    const img = document.getElementById("vehicleImage").value || "https://imgur.com/HkCAjLw.png";
+    const cat = document.getElementById("vehicleCategory").value;
+
+    if (!name || !year) { 
+        alert("Bitte Name und Baujahr angeben!"); 
+        return; 
+    }
+
+    if (!vehiclesData[cat]) vehiclesData[cat] = [];
+    vehiclesData[cat].push({ name, year, description, img });
+
+    adminLog.push({ action: "hinzugefügt", name, category: cat, by: "Admin", timestamp: new Date() });
+
+    renderVehicles(); 
+    updateAdminLog(); 
+    updateRemoveVehicles();
+
+    document.getElementById("vehicleName").value = ""; 
+    document.getElementById("vehicleYear").value = "";
+    document.getElementById("vehicleDescription").value = ""; 
+    document.getElementById("vehicleImage").value = "";
+
+    if (!LOCAL_MODE) { 
+        await saveVehiclesGitHub("Fahrzeug hinzugefügt"); 
+        await saveLogGitHub("Log aktualisiert"); 
+    }
 }
 
 async function removeVehicle() {
