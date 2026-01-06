@@ -3,6 +3,26 @@
     {
       "name": "Ford Explorer",
       "year": "2022",
+      "description": "Test",
+      "img": "https://img.gta5-mods.com/q75/images/lspd-swat-bravado-buffalo-sx-add-on/bccc47-EVE-20220302195941.017_1.png"
+    }
+  ]
+}
+{
+  "Officer I": [
+    {
+      "name": "Ford Explorer",
+      "year": "2020",
+      "description": "Test",
+      "img": "https://img.gta5-mods.com/q75/images/lspd-swat-bravado-buffalo-sx-add-on/bccc47-EVE-20220302195941.017_1.png"
+    }
+  ]
+}
+{
+  "Officer II": [
+    {
+      "name": "Ford Explorer",
+      "year": "2022",
       "description": "Streifenwagen",
       "img": "https://img.gta5-mods.com/q75/images/lspd-swat-bravado-buffalo-sx-add-on/bccc47-EVE-20220302195941.017_1.png"
     }
