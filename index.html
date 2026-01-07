@@ -147,9 +147,25 @@ async function loadLog() {
 }
 
 async function saveVehiclesGitHub(message="Update Fahrzeuge") { 
-    const body={ message, content:btoa(JSON.stringify(vehiclesData,null,2)), branch:GITHUB_BRANCH, sha:vehiclesSHA };
-    const res=await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`,{ method:"PUT", headers:{"Authorization":`token ${GITHUB_TOKEN}`,"Content-Type":"application/json"}, body:JSON.stringify(body) });
-    const json=await res.json(); vehiclesSHA=json.content.sha;
+    const body = { 
+        message, 
+        content: btoa(JSON.stringify(vehiclesData,null,2)), 
+        branch: GITHUB_BRANCH
+    };
+    if (vehiclesSHA) body.sha = vehiclesSHA; // nur setzen, wenn vorhanden
+
+    const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`, {
+        method:"PUT", 
+        headers: {
+            "Authorization":`token ${GITHUB_TOKEN}`,
+            "Content-Type":"application/json"
+        }, 
+        body: JSON.stringify(body)
+    });
+
+    const json = await res.json();
+    if (json.content && json.content.sha) vehiclesSHA = json.content.sha; // SHA aktualisieren
+    console.log("Speichern erfolgreich:", json);
 }
 
 async function saveLogGitHub(message="Update Log") {
