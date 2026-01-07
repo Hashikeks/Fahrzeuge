@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import fetch from "node-fetch";
 import bodyParser from "body-parser";
@@ -8,16 +7,15 @@ dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // aus .env
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_USER = "Hashikeks";
 const GITHUB_REPO = "Fahrzeuge";
 const GITHUB_BRANCH = "main";
 
-// --- Fahrzeuge speichern ---
+// Fahrzeuge speichern
 app.put("/api/vehicles", async (req, res) => {
+  const { content, message, sha } = req.body;
   try {
-    const { content, message, sha } = req.body;
-
     const githubRes = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/vehiclesData.json`, {
       method: "PUT",
       headers: {
@@ -31,7 +29,6 @@ app.put("/api/vehicles", async (req, res) => {
         sha,
       }),
     });
-
     const data = await githubRes.json();
     res.json(data);
   } catch (err) {
@@ -40,11 +37,10 @@ app.put("/api/vehicles", async (req, res) => {
   }
 });
 
-// --- Admin Log speichern ---
+// Admin Log speichern
 app.put("/api/log", async (req, res) => {
+  const { content, message, sha } = req.body;
   try {
-    const { content, message, sha } = req.body;
-
     const githubRes = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/adminLog.json`, {
       method: "PUT",
       headers: {
@@ -58,7 +54,6 @@ app.put("/api/log", async (req, res) => {
         sha,
       }),
     });
-
     const data = await githubRes.json();
     res.json(data);
   } catch (err) {
@@ -67,6 +62,6 @@ app.put("/api/log", async (req, res) => {
   }
 });
 
-// --- Server starten ---
+// Server starten
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server läuft auf Port ${PORT}`));
