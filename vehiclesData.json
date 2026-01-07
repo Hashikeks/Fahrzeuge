@@ -4,43 +4,43 @@
       "name": "Vapid Stanier",
       "year": "2011",
       "description": "",
-      <img src="Fahrzeugliste/Vapid Stanier 2011.png" alt="Vapid Stanier">
+      "img": "Fahrzeugliste/Vapid Stanier 2011.png"
     },
     {
       "name": "Bravado Buffalo",
       "year": "2018",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458104756026212598/image.png?ex=695e6d60&is=695d1be0&hm=a2173f9ccbc09bcd1f8721bbfc95c2423fafe232e650ba690b754e2821a4140a&"
+      "img": "Fahrzeugliste/Bravado Buffalo 2018.png"
     },
     {
       "name": "Vapid Torrence",
       "year": "2010-2019",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458105511252725832/image.png?ex=695e6e14&is=695d1c94&hm=f1e043966d70ae5ec517b7548d0645624f55d72f8a9d594056014535827ffda3&"
+      "img": "Fahrzeugliste/Vapid Torrence.png"
     },
     {
       "name": "Vapid Scout Arjent",
       "year": "2016",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458104178558763211/image.png?ex=695e6cd6&is=695d1b56&hm=b8a1af940e25134caf37412ca8259a428570747cc49e67ff90db76c413e211d2&"
+      "img": "Fahrzeugliste/Vapid Scout 2016 Arjent.png"
     },
     {
       "name": "Vapid Scout Valor",
       "year": "2016",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458103811775402129/image.png?ex=695e6c7e&is=695d1afe&hm=a870a25f3650a3561be17a1567e5b3c70b8838233eb2e3531f2f0502af0cd7ea&"
+      "img": "Fahrzeugliste/Vapid Scout 2016 Valor.png"
     },
     {
       "name": "Declasse Alamo 2600",
       "year": "ca. 2000",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458092013248315544/image.png?ex=695e6181&is=695d1001&hm=1eaab8d037b2c73216d4d30bda65c49c5a3e6845954f80de03f9551e73f601f1&"
+      "img": "Fahrzeugliste/Declasse Alamo 2600.png"
     },
     {
       "name": "Vapid Sandstorm D205",
       "year": "ca. 2000",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458106110673420288/image.png?ex=695e6ea3&is=695d1d23&hm=07ff52d11a4ba3ede4734d1fdfa7e2205f71523d9b47091db50a7067e27bdc69&"
+      "img": "Fahrzeugliste/Vapid Sandstorm D205.png"
     }
   ],
   "Officer II": [
@@ -48,26 +48,25 @@
       "name": "Motorrad",
       "year": "2011",
       "description": "Nur erlaubt mit der Ausbildung",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458492031910543400/image.png?ex=695fd60d&is=695e848d&hm=5cf25cfc705113264b6b2388d49065ba3a97d610b4d8d991f968c4c8d12c2c72&"
+      "img": "Fahrzeugliste/BIKE.png"
     },
     {
       "name": "Bravado Buffalo",
       "year": "2023",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458489591396044831/image.png?ex=695fd3c8&is=695e8248&hm=b75c198ad0eaf6892d082ce251ed74c47ac5d96d94cc71037b163905d3ede63f&"
+      "img": "Fahrzeugliste/Bravado Buffalo 2023.png"
     },
     {
       "name": "Vapid Scout",
       "year": "2020",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458490501601951834/image.png?ex=695fd4a1&is=695e8321&hm=58ce9b8491639ba6c8fba6514f61528d3952997da254b19c635c3c0b8587fcd0&"
+      "img": "Fahrzeugliste/Vapid Scout 2020.png"
     },
     {
       "name": "Declasse Alamo 2700 LX",
       "year": "2000",
       "description": "",
-      "img": "https://cdn.discordapp.com/attachments/1049035672771633374/1458495098827440228/image.png?ex=695fd8e9&is=695e8769&hm=bf608c9e94f949b7bf0e53049b901fec720aac0c8658fbb83a3259d82de1f459&"
-    
+      "img": "Fahrzeugliste/Declasse Alamo 2700 LX.png"
     }
   ]
 }
