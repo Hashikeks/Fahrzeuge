@@ -68,5 +68,13 @@
       "description": "",
       "img": "Fahrzeugliste/Declasse Alamo 2700 LX.png"
     }
-  ]
+  ],
+  "Officer III" [
+  {
+  "name": "Vapid Stanier",
+  "year" : "1998",
+  "description": "In Normal und in Traffic Verfügbar",
+  "img": "Fahrzeugliste/Vapid Stanier 1998 / Traffic.png"
+  }
+ ]
 }
