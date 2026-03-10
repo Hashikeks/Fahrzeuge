@@ -92,25 +92,25 @@
   },
   {
     "name": "Brute Bus Classic",
-    "year" : "-",
+    "year" : "",
     "description": "Academy Bus",
     "img": "Fahrzeugliste/Vapid Sadler 2013.png"
   },
   {
     "name": "ATV",
-    "year" : "-",
+    "year" : "",
     "description": "Quad",
     "img": "Fahrzeugliste/Vapid Sadler 2013.png"
   },
   {
     "name": "Helikopter",
-    "year" : "-",
+    "year" : "",
     "description": "Air Unit",
     "img": "Fahrzeugliste/Vapid Sadler 2013.png"
   },
   {
     "name": "Helikopter Tactic",
-    "year" : "-",
+    "year" : "",
     "description": "S.W.A.T.",
     "img": "Fahrzeugliste/Vapid Sadler 2013.png"
   },
@@ -122,9 +122,9 @@
   },
   {
     "name": "Truck",
-    "year" : "-",
+    "year" : "",
     "description": "Bomb Squad",
     "img": "Fahrzeugliste/Vapid Sadler 2013.png"
   }
-]
+ ]
 }
