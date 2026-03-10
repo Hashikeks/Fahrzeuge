@@ -76,5 +76,11 @@
     "description": "",
     "img": "Fahrzeugliste/Vapid Sadler 2013.png"
     }
-  ]
+  ],
+  "Sonstiges": [
+  {
+    "name": "MTL Packer",
+    "year" : "2013",
+    "description": "Mobile Command Post",
+    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
 }
