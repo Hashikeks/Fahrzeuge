@@ -69,6 +69,12 @@
     "year" : "1998",
     "description": "In Normal und in Traffic",
     "img": "Fahrzeugliste/Vapid Stanier 1998.png"
+    },
+    {
+    "name": "Vapid Sadler",
+    "year" : "2013",
+    "description": "",
+    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
     }
   ]
 }
