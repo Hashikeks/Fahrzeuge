@@ -38,16 +38,6 @@ footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6;
 
 <div id="vehiclesContainer"></div>
 
-<div id="codeInput">
-<input type="password" id="adminCode" placeholder="Admin Code">
-<button onclick="checkCode()">Eingeben</button>
-</div>
-
-<div id="logCodeInput">
-<input type="password" id="logCode" placeholder="Log Code">
-<button onclick="checkLogCode()">Eingeben</button>
-</div>
-
 <div id="adminRemovePanel" style="display:none;">
 <h3>Fahrzeug entfernen</h3>
 <label>Wer entfernt das Fahrzeug? *<input type="text" id="removedBy" placeholder="Dein Name"></label><br>
@@ -91,9 +81,6 @@ footer { text-align: center; margin: 50px 0 20px; font-size: 13px; opacity: 0.6;
 
 <script>
 // ------------------- CONFIG -------------------
-const ADMIN_PASSWORD = "Leitung2026";
-const LOG_PASSWORD = "Walker77";
-
 const GITHUB_USER = "Hashikeks";
 const GITHUB_REPO = "Fahrzeuge";
 const GITHUB_BRANCH = "main";
@@ -123,15 +110,6 @@ function renderVehicles() {
         });
         section.appendChild(grid); container.appendChild(section);
     }
-}
-
-function updateAdminLog() {
-    const ul = document.getElementById("adminLog"); ul.innerHTML = "";
-    adminLog.slice().reverse().forEach(e => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${e.name}</strong> wurde <em>${e.action}</em> von <strong>${e.by}</strong> in Kategorie <strong>${e.category}</strong> am ${new Date(e.timestamp).toLocaleString()}`;
-        ul.appendChild(li);
-    });
 }
 
 async function loadVehicles() {
@@ -174,22 +152,6 @@ async function saveLogGitHub(message="Update Log") {
     const json=await res.json(); logSHA=json.content.sha;
 }
 
-function checkCode() {
-    if (document.getElementById("adminCode").value===ADMIN_PASSWORD) {
-        document.getElementById("adminPanel").style.display="block";
-        document.getElementById("adminRemovePanel").style.display="block";
-        document.getElementById("codeInput").style.display="none";
-        alert("Admin Panel freigeschaltet!");
-    } else alert("Falscher Code!");
-}
-
-function checkLogCode() {
-    if (document.getElementById("logCode").value===LOG_PASSWORD) {
-        const panel=document.getElementById("adminPlusPanel"); panel.style.display="block"; setTimeout(()=>panel.classList.add("show"),10);
-        document.getElementById("logCodeInput").style.display="none"; updateAdminLog(); alert("Versionsverlauf freigeschaltet!");
-    } else alert("Falscher Code!");
-}
-
 async function addVehicle() {
     const name=document.getElementById("vehicleName").value.trim();
     const year=document.getElementById("vehicleYear").value.trim();
@@ -224,14 +186,6 @@ function updateRemoveVehicles(){
     const sel=document.getElementById("removeVehicle"); sel.innerHTML="<option value=''>Fahrzeug wählen</option>";
     if(cat && vehiclesData[cat]) vehiclesData[cat].forEach((v,i)=>{ const opt=document.createElement("option"); opt.value=i; opt.textContent=v.name; sel.appendChild(opt); });
 }
-
-async function clearAdminLog() {
-    if(confirm("Möchtest du wirklich den gesamten Versionsverlauf löschen?")){
-        adminLog=[]; updateAdminLog();
-        const panel=document.getElementById("adminPlusPanel"); panel.classList.remove("show"); setTimeout(()=>panel.style.display="none",500);
-        if(!LOCAL_MODE) await saveLogGitHub("Versionsverlauf gelöscht");
-        alert("Versionsverlauf gelöscht!");
-    }
 }
 
 // ------------------- Initial -------------------
