@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -100,6 +101,7 @@ opacity: 0.6;
 100% { border-color: #ff3b3b; box-shadow:0 0 10px rgba(255,59,59,0.8);}
 }
 </style>
+
 </head>
 
 <body>
@@ -110,7 +112,6 @@ opacity: 0.6;
 
 <script>
 
-// CONFIG
 const GITHUB_USER = "Hashikeks";
 const GITHUB_REPO = "Fahrzeuge";
 const GITHUB_BRANCH = "main";
@@ -166,13 +167,19 @@ container.appendChild(section);
 
 async function loadVehicles() {
 
-const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${VEHICLES_FILE}`);
+try {
 
-const json = await res.json();
+const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${VEHICLES_FILE}`);
 
-vehiclesData = JSON.parse(atob(json.content));
+vehiclesData = await res.json();
 
 renderVehicles();
+
+} catch (error) {
+
+console.error("Fehler beim Laden der Fahrzeuge:", error);
+
+}
 
 }
 
