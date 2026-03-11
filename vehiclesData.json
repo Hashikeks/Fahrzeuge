@@ -80,51 +80,51 @@
   "Sonstiger Fuhrpark": [
   {
     "name": "MTL Packer",
-    "year" : "2011",
+    "year" : "2020",
     "description": "Mobile Command Post",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "img": "Fahrzeugliste/MTL Packer.png"
   },
   {
     "name": "Brute Chieftain",
-    "year" : "2001",
+    "year" : "",
     "description": "Bearcat | S.W.A.T.",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "img": "Fahrzeugliste/Brute Chieftain.png"
   },
   {
     "name": "Brute Bus Classic",
-    "year" : "",
+    "year" : "1950 - 1967",
     "description": "Academy Bus",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "img": "Fahrzeugliste/Brute Bus Classic.png"
   },
   {
     "name": "ATV",
     "year" : "",
-    "description": "Quad",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "description": "Für Strände etc.",
+    "img": "Fahrzeugliste/ATV.png"
   },
   {
     "name": "Helikopter",
     "year" : "",
     "description": "Air Unit",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "img": "Fahrzeugliste/Helikopter.png"
   },
   {
     "name": "Helikopter Tactic",
     "year" : "",
     "description": "S.W.A.T.",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "img": "Fahrzeugliste/Helikopter Tactic.png"
   },
   {
     "name": "Declasse Yosemite",
     "year" : "2001",
     "description": "Bomb Squad",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "img": "Fahrzeugliste/Declasse Yosemite 2017.png"
   },
   {
     "name": "Truck",
     "year" : "",
     "description": "Bomb Squad",
-    "img": "Fahrzeugliste/Vapid Sadler 2013.png"
+    "img": "Fahrzeugliste/Truck.png"
   }
  ]
 }
